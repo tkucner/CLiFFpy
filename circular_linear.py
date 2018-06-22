@@ -1,5 +1,9 @@
 from collections import namedtuple
-CLDataPoint = namedtuple("CLDataPoint", "X Y Z theta Gamma Rho T")
+import numpy as np
+CLDataPoint = namedtuple("CLDataPoint", "X Y Z Theta Gamma Rho T")
 
-def CosDistance2D(p1, p2)
-    dist=1-cos
+
+def cos_distance_2d(p1, p2):
+    dist = 1-math.cos(p1.Theta-p2.Theta)+np.linalg.norm([p1.Rho, p2.Rho])
+    return dist
+
