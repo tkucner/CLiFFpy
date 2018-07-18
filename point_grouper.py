@@ -1,6 +1,6 @@
 import sys
 import numpy as np
-import cl_aritmetics as cla
+import cl_arithmetic as cla
 
 GROUP_DISTANCE_TOLERANCE = .1
 

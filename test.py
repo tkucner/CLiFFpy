@@ -1,6 +1,6 @@
 import unittest
 import cl_point
-import cl_aritmetics
+import cl_arithmetic
 
 
 class TestDistanceMetrics(unittest.TestCase):
@@ -30,16 +30,16 @@ class TestDistanceMetrics(unittest.TestCase):
 
     def test_wrap_to_pi(self):
         for i in range(len(self.test_a)):
-            self.assertAlmostEqual(cl_aritmetics.wrap_to_pi(self.test_a[i]), self.test_wrap_a[i], self.places)
+            self.assertAlmostEqual(cl_arithmetic.wrap_to_pi(self.test_a[i]), self.test_wrap_a[i], self.places)
 
     def test_distance_cos_2d(self):
         for i in range(len(self.test_d_cos)):
-            self.assertAlmostEqual(cl_aritmetics.distance_cos_2d(self.test_p1[i], self.test_p2[i]), self.test_d_cos[i],
+            self.assertAlmostEqual(cl_arithmetic.distance_cos_2d(self.test_p1[i], self.test_p2[i]), self.test_d_cos[i],
                                    self.places)
 
     def test_distance_wrap_2d(self):
         for i in range(len(self.test_d_cos)):
-            self.assertAlmostEqual(cl_aritmetics.distance_wrap_2d(self.test_p1[i], self.test_p2[i]), self.test_d_wrap[i],
+            self.assertAlmostEqual(cl_arithmetic.distance_wrap_2d(self.test_p1[i], self.test_p2[i]), self.test_d_wrap[i],
                                    self.places)
 
 

@@ -3,8 +3,8 @@ import math
 
 
 def gaussian_kernel(distance, bandwidth):
-    #euclidean_distance = np.sqrt(((distance)**2).sum(axis=1))
-    val = (1/(bandwidth*math.sqrt(2*math.pi))) * np.exp(-0.5*((distance / bandwidth))**2)
+    # euclidean_distance = np.sqrt(((distance)**2).sum(axis=1))
+    val = (1/(bandwidth*math.sqrt(2*math.pi))) * np.exp(-0.5*(distance / bandwidth)**2)
     return val
 
 

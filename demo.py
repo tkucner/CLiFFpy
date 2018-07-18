@@ -2,39 +2,51 @@ import cl_rand
 import cl_visualisation as cl_vis
 import numpy as np
 import mean_shift as ms
-import cl_aritmetics as cl_a
+import cl_arithmetic as cl_a
 import matplotlib.pyplot as plt
 
-#r = cl_rand.cl_gauss_2d([1.5, 1.2], [[0.1, 0.02], [0.1, 0.1]], 1000)
-#r = np.append(r, cl_rand.cl_gauss_2d([6, 2.2], [[0.1, -0.02], [0.1, 0.1]], 1000), axis=0)
-r = cl_rand.cl_gauss_2d([6, 2.2], [[0.1, -0.02], [0.1, 0.1]], 1000)
+r = cl_rand.cl_gauss_2d([6.28, 1.2], [[0.1, 0.0], [0.0, 0.1]], 1000)
+r = np.append(r, cl_rand.cl_gauss_2d([3.14, 1.2], [[0.1, 0.0], [0.0, 0.1]], 1000), axis=0)
 
-
-cl_vis.plot_data_simple(r)
-
-
+# cl_vis.plot_data_simple(r)
 
 mean_shifter = ms.MeanShift()
-mean_shift_result = mean_shifter.cluster(r, kernel_bandwidth = 1)
-print(mean_shift_result)
+mean_shift_result = mean_shifter.cluster(r, kernel_bandwidth=0.5)
 
-original_points =  mean_shift_result.original_points
+original_points = mean_shift_result.original_points
 shifted_points = mean_shift_result.shifted_points
 cluster_assignments = mean_shift_result.cluster_ids
+history=mean_shift_result.history
 
-x = original_points[:,0]
-y = original_points[:,1]
+print(original_points)
+print(shifted_points)
+
+x = original_points[:, 0]
+y = original_points[:, 1]
 Cluster = cluster_assignments
 centers = shifted_points
 
 fig = plt.figure()
-ax = fig.add_subplot(111)
-scatter = ax.scatter(x,y,c=Cluster,s=50)
+ax = fig.add_subplot(211)
+
+for it in range(0,len(history)):
+
+    l_hist = history[it]
+    l_hist = np.array(l_hist)
+    plt.text(l_hist[0, 0], l_hist[0, 1], str(it))
+    X = l_hist[:, 0]
+    Y = l_hist[:, 1]
+    ax.plot(X, Y)
+    ax.scatter(X, Y, s=5)
+
+bx = fig.add_subplot(212)
+scatter = bx.scatter(x, y, c=Cluster, s=20)
 for i,j in centers:
-    ax.scatter(i,j,s=50,c='red',marker='+')
-ax.set_xlabel('x')
-ax.set_ylabel('y')
-plt.colorbar(scatter)
+    bx.scatter(i, j, s=500, c='red', marker='+')
+
+#ax.set_xlabel('x')
+#ax.set_ylabel('y')
+#plt.colorbar(scatter)
 
 fig.savefig("mean_shift_result")
 

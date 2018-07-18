@@ -1,5 +1,5 @@
 import numpy as np
-import cl_aritmetics as cl_a
+import cl_arithmetic as cl_a
 
 
 def cl_gauss_2d(mu, sigma, n):

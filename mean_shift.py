@@ -22,7 +22,7 @@
 
 import numpy as np
 import utils as ut
-import cl_aritmetics as cla
+import cl_arithmetic as cla
 import point_grouper as pg
 
 # import point_grouper as pg
@@ -37,18 +37,24 @@ class MeanShift(object):
         self.distance = distance
 
     def cluster(self, points, kernel_bandwidth, iteration_callback=None):
-        if(iteration_callback):
+        if iteration_callback:
             iteration_callback(points, 0)
         shift_points = np.array(points)
         max_min_dist = 1
         iteration_number = 0
-        print("Working")
+
+        history = points
+        history = history.tolist()
+        for i in range(0, len(history)):
+            history[i] = [history[i]]
+
         still_shifting = [True] * points.shape[0]
         while max_min_dist > MIN_DISTANCE:
             # print max_min_dist
             max_min_dist = 0
             iteration_number += 1
             print("Working")
+            print(still_shifting)
             for i in range(0, len(shift_points)):
                 if not still_shifting[i]:
                     continue
@@ -57,6 +63,9 @@ class MeanShift(object):
                 p_new = self._shift_point(p_new, points, kernel_bandwidth)
 
                 dist = self.distance(p_new, p_new_start)
+
+                history[i].append(p_new)
+                # print(history[i])
 
                 if dist > max_min_dist:
                     max_min_dist = dist
@@ -67,19 +76,18 @@ class MeanShift(object):
                 iteration_callback(shift_points, iteration_number)
         point_grouper = pg.PointGrouper()
         group_assignments = point_grouper.group_points(shift_points.tolist())
-        return MeanShiftResult(points, shift_points, group_assignments)
+        return MeanShiftResult(points, shift_points, group_assignments, history)
 
     def _shift_point(self, point, points, kernel_bandwidth):
         # from http://en.wikipedia.org/wiki/Mean-shift
         points = np.array(points)
-        point_rep=np.tile(point, [len(points), 1])
-        # numerator
+        point_rep = np.tile(point, [len(points), 1])
+        dist = cla.distance_wrap_2d_vec(point_rep, points)
+        point_weights = self.kernel(dist, kernel_bandwidth)
 
-        point_weights = self.kernel(self.distance(point_rep, points), kernel_bandwidth)
-        tiled_weights = np.tile(point_weights, [len(point), 1])
-        # denominator
-        denominator = sum(point_weights)
-        shifted_point = np.multiply(tiled_weights.transpose(), points).sum(axis=0) / denominator
+        # tiled_weights = np.tile(point_weights, [len(point), 1])
+
+        shifted_point = cla.weighted_mean_2d_vec(points, point_weights)
         return shifted_point
 
         # ***************************************************************************
@@ -102,7 +110,8 @@ class MeanShift(object):
 
 
 class MeanShiftResult:
-    def __init__(self, original_points, shifted_points, cluster_ids):
+    def __init__(self, original_points, shifted_points, cluster_ids, history):
         self.original_points = original_points
         self.shifted_points = shifted_points
         self.cluster_ids = cluster_ids
+        self.history = history
