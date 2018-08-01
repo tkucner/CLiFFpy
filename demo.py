@@ -1,14 +1,12 @@
 import cl_rand
-import cl_visualisation as cl_vis
+import cl_visualisation as clvis
 import numpy as np
 import mean_shift as ms
-import cl_arithmetic as cl_a
+import cl_arithmetic as cla
 import matplotlib.pyplot as plt
 
 r = cl_rand.cl_gauss_2d([6.28, 1.2], [[0.1, 0.0], [0.0, 0.1]], 1000)
 r = np.append(r, cl_rand.cl_gauss_2d([3.14, 1.2], [[0.1, 0.0], [0.0, 0.1]], 1000), axis=0)
-
-# cl_vis.plot_data_simple(r)
 
 mean_shifter = ms.MeanShift()
 mean_shift_result = mean_shifter.cluster(r, kernel_bandwidth=0.5)
@@ -16,10 +14,7 @@ mean_shift_result = mean_shifter.cluster(r, kernel_bandwidth=0.5)
 original_points = mean_shift_result.original_points
 shifted_points = mean_shift_result.shifted_points
 cluster_assignments = mean_shift_result.cluster_ids
-history=mean_shift_result.history
-
-print(original_points)
-print(shifted_points)
+history = mean_shift_result.history
 
 x = original_points[:, 0]
 y = original_points[:, 1]
@@ -44,9 +39,6 @@ scatter = bx.scatter(x, y, c=Cluster, s=20)
 for i,j in centers:
     bx.scatter(i, j, s=500, c='red', marker='+')
 
-#ax.set_xlabel('x')
-#ax.set_ylabel('y')
-#plt.colorbar(scatter)
 
 fig.savefig("mean_shift_result")
 

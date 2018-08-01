@@ -1,5 +1,6 @@
 import matplotlib.pyplot as plt
 
+
 def plot_data_simple(data):
     x = data[:, 0]
     y = data[:, 1]
@@ -11,3 +12,5 @@ def plot_data_simple(data):
     #plt.colorbar(scatter)
     plt.show()
     #fig.savefig("mean_shift_result")
+
+

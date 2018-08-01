@@ -25,16 +25,13 @@ import utils as ut
 import cl_arithmetic as cla
 import point_grouper as pg
 
-# import point_grouper as pg
-# import mean_shift_utils as ms_utils
-
 MIN_DISTANCE = 0.000001
 
-
 class MeanShift(object):
-    def __init__(self, kernel=ut.gaussian_kernel, distance=cla.distance_wrap_2d):
+    def __init__(self, kernel=ut.gaussian_kernel, distance=cla.distance_wrap_2d_vec, weight = cla.weighted_mean_2d_vec):
         self.kernel = kernel
         self.distance = distance
+        self.weight = weight
 
     def cluster(self, points, kernel_bandwidth, iteration_callback=None):
         if iteration_callback:
@@ -76,37 +73,18 @@ class MeanShift(object):
                 iteration_callback(shift_points, iteration_number)
         point_grouper = pg.PointGrouper()
         group_assignments = point_grouper.group_points(shift_points.tolist())
+
         return MeanShiftResult(points, shift_points, group_assignments, history)
 
     def _shift_point(self, point, points, kernel_bandwidth):
         # from http://en.wikipedia.org/wiki/Mean-shift
         points = np.array(points)
         point_rep = np.tile(point, [len(points), 1])
-        dist = cla.distance_wrap_2d_vec(point_rep, points)
+        dist = self.distance(point_rep, points)
         point_weights = self.kernel(dist, kernel_bandwidth)
 
-        # tiled_weights = np.tile(point_weights, [len(point), 1])
-
-        shifted_point = cla.weighted_mean_2d_vec(points, point_weights)
+        shifted_point = self.weight(points, point_weights)
         return shifted_point
-
-        # ***************************************************************************
-        # ** The above vectorized code is equivalent to the unrolled version below **
-        # ***************************************************************************
-        # shift_x = float(0)
-        # shift_y = float(0)
-        # scale_factor = float(0)
-        # for p_temp in points:
-        #     # numerator
-        #     dist = ms_utils.euclidean_dist(point, p_temp)
-        #     weight = self.kernel(dist, kernel_bandwidth)
-        #     shift_x += p_temp[0] * weight
-        #     shift_y += p_temp[1] * weight
-        #     # denominator
-        #     scale_factor += weight
-        # shift_x = shift_x / scale_factor
-        # shift_y = shift_y / scale_factor
-        # return [shift_x, shift_y]
 
 
 class MeanShiftResult:

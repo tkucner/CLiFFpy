@@ -20,3 +20,11 @@ def gaussian_kernel_mv(distances, bandwidths):
     val = (1 / np.power((2 * math.pi), (dim/2)) * np.power(np.linalg.det(cov), 0.5)) * np.exp(exponent)
 
     return val
+
+
+def cutoff(distances, treshold):
+    closer=(distances < treshold) & (distances>0)
+    closer=closer.astype(int)
+    count=np.sum(closer, axis=1)
+    return count
+

@@ -6,6 +6,9 @@ GROUP_DISTANCE_TOLERANCE = .1
 
 
 class PointGrouper(object):
+    def __init__(self, distance=cla.distance_wrap_2d_vec):
+        self.distance = distance
+
     def group_points(self, points):
         group_assignment = []
         groups = []
@@ -35,7 +38,7 @@ class PointGrouper(object):
     def _distance_to_group(self, point, group):
         min_distance = sys.float_info.max
         for pt in group:
-            dist = cla.distance_wrap_2d(point, pt)
+            dist = self.distance(point, pt)
             if dist < min_distance:
                 min_distance = dist
         return min_distance
