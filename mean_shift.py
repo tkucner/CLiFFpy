@@ -27,6 +27,7 @@ import point_grouper as pg
 
 MIN_DISTANCE = 0.000001
 
+
 class MeanShift(object):
     def __init__(self, kernel=ut.gaussian_kernel, distance=cla.distance_wrap_2d_vec, weight = cla.weighted_mean_2d_vec):
         self.kernel = kernel
@@ -50,8 +51,6 @@ class MeanShift(object):
             # print max_min_dist
             max_min_dist = 0
             iteration_number += 1
-            print("Working")
-            print(still_shifting)
             for i in range(0, len(shift_points)):
                 if not still_shifting[i]:
                     continue
@@ -93,3 +92,13 @@ class MeanShiftResult:
         self.shifted_points = shifted_points
         self.cluster_ids = cluster_ids
         self.history = history
+        self.mixing_factors=[]
+        self.covariances=[]
+        self.mean_values=[]
+        # compute GMM parameters
+        unique_cluster_ids,counts=np.unique(self.cluster_ids,return_counts=True)
+        for uid,c in zip(unique_cluster_ids,counts):
+            self.mixing_factors.append(c/self.cluster_ids.size)
+            self.mean_values.append(np.mean(self.original_points[self.cluster_ids == uid, :]))
+            self.mean_values.append(np.cov(self.original_points[self.cluster_ids == uid, :]))
+
